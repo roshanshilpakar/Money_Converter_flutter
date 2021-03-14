@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:unit_converter/services/api_client.dart';
+import 'package:unit_converter/widgets/drop_down.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,8 +24,37 @@ class HomePage extends StatefulWidget{
 }
 
 class _HomePageState extends State<HomePage>{
+  //first create an instance of the API client
+  ApiClient client = ApiClient();
+  //setting the main colors
   Color mainColor = Color(0xFF212936);
   Color secondColor = Color(0xFF2849E5);
+  //setting the variables
+  List<String> currencies;
+  String from;
+  String to;
+
+//variables for exchange rate
+  double rate;
+  String result = "";
+
+
+  //Function to call the api
+  Future<List<String>> getCurrencyList() async{
+    return await client.getCurrencies();
+  }
+  @override
+  void initState(){
+    super.initState();
+    // ignore: unnecessary_statements
+    (() async {
+      List<String> list = await getCurrencyList();
+      setState(() {
+        currencies = list;
+      });
+
+    });
+  }
 
   @override
   Widget build(BuildContext context){
@@ -75,6 +107,12 @@ class _HomePageState extends State<HomePage>{
                     ),
                     SizedBox(
                       height: 20.0,
+                    ),
+                    Row(
+                      children: [
+                        //creating a custom widget for the currencies drop down button
+                        customDropDown(currencies, from, (from){})
+                      ],
                     ),
                   ],
                 )
